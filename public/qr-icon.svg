@@ -1,0 +1,31 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="6" fill="url(#gradient)"/>
+  <!-- QR Pattern -->
+  <rect x="4" y="4" width="6" height="6" rx="1" fill="white"/>
+  <rect x="22" y="4" width="6" height="6" rx="1" fill="white"/>
+  <rect x="4" y="22" width="6" height="6" rx="1" fill="white"/>
+  
+  <!-- Inner squares -->
+  <rect x="6" y="6" width="2" height="2" fill="url(#gradient)"/>
+  <rect x="24" y="6" width="2" height="2" fill="url(#gradient)"/>
+  <rect x="6" y="24" width="2" height="2" fill="url(#gradient)"/>
+  
+  <!-- Pattern dots -->
+  <rect x="13" y="4" width="2" height="2" rx="1" fill="white"/>
+  <rect x="16" y="4" width="2" height="2" rx="1" fill="white"/>
+  <rect x="13" y="7" width="2" height="2" rx="1" fill="white"/>
+  <rect x="16" y="10" width="2" height="2" rx="1" fill="white"/>
+  <rect x="19" y="13" width="2" height="2" rx="1" fill="white"/>
+  <rect x="13" y="16" width="2" height="2" rx="1" fill="white"/>
+  <rect x="16" y="19" width="2" height="2" rx="1" fill="white"/>
+  <rect x="19" y="22" width="2" height="2" rx="1" fill="white"/>
+  <rect x="13" y="25" width="2" height="2" rx="1" fill="white"/>
+  <rect x="16" y="28" width="2" height="2" rx="1" fill="white"/>
+  
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+</svg>
