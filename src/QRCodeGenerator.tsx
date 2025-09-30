@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { QrCode, Link, MessageSquare, User, Download, Copy, Check } from 'lucide-react';
+import { QrCode, Link, MessageSquare, User, Download, Copy, Check, Image } from 'lucide-react';
 import useQRCodeGenerator, { type ActiveTab } from './hooks/useQRCodeGenerator';
 import { createTranslator, resolveLocale } from './lib/i18n';
 
@@ -320,31 +320,50 @@ const QRCodeGenerator = () => {
                 </div>
 
                 {qr.data && (
-                  <div className="flex gap-4 w-full max-w-sm">
+                  <div className="flex flex-col gap-3 w-full max-w-sm">
                     <button
                       onClick={download.download}
-                      className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg"
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-200 font-medium shadow-lg"
                     >
                       <Download className="w-4 h-4" />
                       {t('download')}
                     </button>
 
-                    <button
-                      onClick={qr.copyToClipboard}
-                      className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
-                    >
-                      {qr.copied ? (
-                        <>
-                          <Check className="w-4 h-4 text-green-600" />
-                          {t('copied')}
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" />
-                          {t('copyData')}
-                        </>
-                      )}
-                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={qr.copyToClipboard}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
+                      >
+                        {qr.copied ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600" />
+                            {t('copied')}
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-4 h-4" />
+                            {t('copyData')}
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        onClick={qr.copyImageToClipboard}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200 font-medium"
+                      >
+                        {qr.copiedImage ? (
+                          <>
+                            <Check className="w-4 h-4 text-green-600" />
+                            {t('imageCopied')}
+                          </>
+                        ) : (
+                          <>
+                            <Image className="w-4 h-4" />
+                            {t('copyImage')}
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 )}
 
