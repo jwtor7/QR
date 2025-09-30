@@ -9,9 +9,11 @@
 - 🖼️ **Center Image Overlay**: Add logos or images to the center of your QR codes
 - 📱 **Multi-language Support**: English and Spanish translations
 - 📥 **Custom Downloads**: Custom filenames with optional timestamps
+- 📋 **Clipboard Support**: Copy QR data as text or PNG image to clipboard
 - 🎯 **High-Quality Output**: Canvas-based generation with fallback options
 - 📱 **Responsive Design**: Modern UI built with Tailwind CSS
 - ⚡ **Fast Development**: Built with Vite and TypeScript
+- ✅ **Fully Tested**: Comprehensive test suite with 63 passing tests
 
 ## 🚀 Quick Start
 
@@ -91,23 +93,66 @@ npm run preview
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues
+- `npm test` - Run test suite
+- `npm run test:ui` - Run tests with interactive UI
+- `npm run test:coverage` - Generate test coverage report
 
 ### Project Structure
 
 ```
 src/
 ├── QRCodeGenerator.tsx         # Main component (presentation layer)
+├── QRCodeGenerator.test.tsx    # Integration tests for main component
 ├── hooks/
-│   └── useQRCodeGenerator.ts  # Custom hook (business logic & state)
+│   ├── useQRCodeGenerator.ts   # Custom hook (business logic & state)
+│   └── useQRCodeGenerator.test.ts  # Unit tests for hook
 ├── lib/
-│   └── i18n.ts               # Internationalization system
+│   ├── i18n.ts                 # Internationalization system
+│   └── i18n.test.ts           # Unit tests for i18n
+├── test/
+│   └── setup.ts               # Test configuration and mocks
 ├── App.tsx                    # App wrapper
 ├── main.tsx                  # Entry point
 ├── index.css                 # Global styles
 └── App.css                   # Component styles
 ```
 
+### Testing
+
+The project includes comprehensive test coverage with Vitest and React Testing Library:
+
+- **Unit Tests**: Test individual functions and hooks in isolation
+- **Integration Tests**: Test component interactions and user flows
+- **Coverage**: 63 tests covering critical functionality
+
+Run tests with `npm test` or use `npm run test:ui` for an interactive testing experience.
+
 ## 📋 Changelog
+
+### [1.3.0] - 2025-09-30
+
+#### Added
+- **Copy Image to Clipboard**: New button to copy QR code PNG directly to clipboard
+  - Uses Clipboard API for modern browser compatibility
+  - Supports both canvas and fallback image sources
+  - Visual feedback with "Image Copied!" message
+- **Comprehensive Testing**: Full test suite with Vitest and React Testing Library
+  - 63 passing tests covering all major functionality
+  - Unit tests for hooks and utilities
+  - Integration tests for user interactions
+  - Test scripts: `npm test`, `npm run test:ui`, `npm run test:coverage`
+
+#### Improved
+- **UI Layout**: Reorganized action buttons for better UX
+  - Full-width Download button
+  - Side-by-side Copy Data and Copy Image buttons
+- **Translation System**: Added 2 new translation keys (copyImage, imageCopied) in English and Spanish
+
+#### Technical
+- Added ClipboardItem polyfill for testing
+- Enhanced hook with `copiedImage` state and `copyImageToClipboard` function
+- Updated component with Image icon from lucide-react
+- Comprehensive test coverage for clipboard functionality
 
 ### [1.2.4] - 2025-09-29
 
@@ -128,12 +173,6 @@ src/
 - Improved type safety with grouped return values
 - Better separation of concerns between presentation and business logic
 - Bundle size reduced by ~240 bytes
-
-### [1.2.3] - Previous Release
-- Initial modular architecture with custom hooks
-- Multi-language support (English/Spanish)
-- Advanced color customization with hex inputs
-- Center image overlay functionality
 
 ## 🌐 Deployment
 

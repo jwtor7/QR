@@ -41,6 +41,7 @@ const useQRCodeGenerator = (t: Translator) => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('url');
   const [qrData, setQrData] = useState('');
   const [copied, setCopied] = useState(false);
+  const [copiedImage, setCopiedImage] = useState(false);
   const qrContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [foregroundColor, setForegroundColor] = useState('#000000');
@@ -57,6 +58,7 @@ const useQRCodeGenerator = (t: Translator) => {
   const [contactInfo, setContactInfo] = useState<ContactInfo>(initialContactInfo);
 
   const copyTimeoutRef = useRef<number | null>(null);
+  const copyImageTimeoutRef = useRef<number | null>(null);
 
   const sanitizeFilename = useCallback((name: string) => {
     const cleaned = (name || DEFAULT_FILENAME)
@@ -427,6 +429,71 @@ const useQRCodeGenerator = (t: Translator) => {
     }
   }, [qrData]);
 
+  const copyImageToClipboard = useCallback(async () => {
+    if (!qrData || !qrContainerRef.current) {
+      return;
+    }
+
+    const canvas = qrContainerRef.current.querySelector('canvas');
+    const img = qrContainerRef.current.querySelector('img');
+
+    try {
+      let blob: Blob | null = null;
+
+      if (canvas) {
+        // Copy from canvas
+        blob = await new Promise<Blob | null>((resolve) => {
+          canvas.toBlob((b) => resolve(b), 'image/png', 1.0);
+        });
+      } else if (img) {
+        // Copy from image by recreating on canvas
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = QR_CODE_SIZE;
+        tempCanvas.height = QR_CODE_SIZE;
+        const ctx = tempCanvas.getContext('2d');
+
+        if (ctx) {
+          const tempImg = new Image();
+          tempImg.crossOrigin = 'anonymous';
+
+          blob = await new Promise<Blob | null>((resolve, reject) => {
+            tempImg.onload = () => {
+              ctx.fillStyle = 'white';
+              ctx.fillRect(0, 0, QR_CODE_SIZE, QR_CODE_SIZE);
+              ctx.drawImage(tempImg, 0, 0, QR_CODE_SIZE, QR_CODE_SIZE);
+
+              tempCanvas.toBlob((b) => resolve(b), 'image/png', 1.0);
+            };
+
+            tempImg.onerror = () => reject(new Error('Failed to load image'));
+            tempImg.src = img.src;
+          });
+        }
+      }
+
+      if (blob) {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            'image/png': blob,
+          }),
+        ]);
+
+        setCopiedImage(true);
+
+        if (copyImageTimeoutRef.current) {
+          window.clearTimeout(copyImageTimeoutRef.current);
+        }
+
+        copyImageTimeoutRef.current = window.setTimeout(
+          () => setCopiedImage(false),
+          CLIPBOARD_RESET_TIMEOUT
+        );
+      }
+    } catch (error) {
+      console.error('Failed to copy image:', error);
+    }
+  }, [qrData]);
+
   const resetForm = useCallback(() => {
     setUrlInput('');
     setTextInput('');
@@ -441,6 +508,7 @@ const useQRCodeGenerator = (t: Translator) => {
     setCustomFilename(DEFAULT_FILENAME);
     setAddTimestamp(false);
     setCopied(false);
+    setCopiedImage(false);
 
     setQrData('');
 
@@ -484,6 +552,9 @@ const useQRCodeGenerator = (t: Translator) => {
       if (copyTimeoutRef.current) {
         window.clearTimeout(copyTimeoutRef.current);
       }
+      if (copyImageTimeoutRef.current) {
+        window.clearTimeout(copyImageTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -497,6 +568,8 @@ const useQRCodeGenerator = (t: Translator) => {
       containerRef: qrContainerRef,
       copied,
       copyToClipboard,
+      copiedImage,
+      copyImageToClipboard,
     },
     form: {
       urlInput,

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-QR Code Generator is a React-based web application built with TypeScript and Vite that generates customizable QR codes. The app supports multiple QR code types (URL, text, contact/vCard), color customization, center image overlays, and custom filename downloads with multi-language support (English/Spanish).
+QR Code Generator is a React-based web application built with TypeScript and Vite that generates customizable QR codes. The app supports multiple QR code types (URL, text, contact/vCard), color customization, center image overlays, clipboard operations (copy text data or PNG image), and custom filename downloads with multi-language support (English/Spanish). Includes comprehensive test suite with 63 passing tests.
 
 ## Key Commands
 
@@ -21,6 +21,13 @@ npm run lint         # Run ESLint checks
 npm run lint:fix     # Auto-fix ESLint issues
 ```
 
+**Testing:**
+```bash
+npm test             # Run all tests once
+npm run test:ui      # Run tests with interactive UI
+npm run test:coverage # Generate coverage report
+```
+
 **Node version:** Project uses Volta with Node 20.19.5 and npm 11.6.1 (specified in package.json)
 
 ## Architecture
@@ -28,9 +35,14 @@ npm run lint:fix     # Auto-fix ESLint issues
 ### Modular Architecture
 The application follows a clean separation of concerns:
 
-- **`src/QRCodeGenerator.tsx`** (~372 lines) - Presentation layer with UI components and layout
-- **`src/hooks/useQRCodeGenerator.ts`** (~536 lines) - Business logic, state management, and QR generation
-- **`src/lib/i18n.ts`** (~147 lines) - Internationalization system with locale detection and translation utilities
+- **`src/QRCodeGenerator.tsx`** (~391 lines) - Presentation layer with UI components and layout
+- **`src/hooks/useQRCodeGenerator.ts`** (~609 lines) - Business logic, state management, and QR generation
+- **`src/lib/i18n.ts`** (~151 lines) - Internationalization system with locale detection and translation utilities
+- **Testing files** - Comprehensive test suite with 63 tests
+  - `src/QRCodeGenerator.test.tsx` - Integration tests
+  - `src/hooks/useQRCodeGenerator.test.ts` - Hook unit tests
+  - `src/lib/i18n.test.ts` - i18n utility tests
+  - `src/test/setup.ts` - Test configuration and mocks
 
 This modular design separates:
 - **UI/Presentation** from business logic (component only handles rendering)
@@ -65,6 +77,13 @@ The app uses a **dynamic script loading** approach with fallback mechanisms:
 - Filename sanitization: Removes invalid characters with regex `/[^a-zA-Z0-9\-_\s]/g`
 - Optional timestamp: Format `MMDD-HHMM` appended to filename
 
+**Clipboard Operations:**
+- **Copy Text Data:** Copies QR data (URL, text, or vCard) to clipboard using `navigator.clipboard.writeText()`
+- **Copy Image:** Converts canvas/image to PNG blob and copies to clipboard using `navigator.clipboard.write()` with `ClipboardItem`
+- Supports both canvas-based QR codes and fallback image sources
+- Visual feedback with timeout (2 seconds) for both copy operations
+- Independent state tracking: `copied` for text, `copiedImage` for image
+
 **vCard Generation (Contact QR):**
 - Generates vCard v3.0 format string
 - Multi-line format with proper line breaks for vCard specification
@@ -83,15 +102,15 @@ The app uses a **dynamic script loading** approach with fallback mechanisms:
 All state is managed via a custom hook with React hooks (no external state library):
 - **Form inputs:** `urlInput`, `textInput`, `contactInfo` (object)
 - **Customization:** `foregroundColor`, `backgroundColor`, `centerImage`, `customFilename`, `addTimestamp`
-- **UI state:** `activeTab`, `qrData`, `copied`
-- **Refs:** `qrContainerRef` for DOM manipulation of QR container, `copyTimeoutRef` for clipboard feedback
-- **Constants (lines 23-29):** `QR_CODE_SIZE`, `CENTER_IMAGE_SIZE_RATIO`, `CENTER_IMAGE_PADDING`, etc.
+- **UI state:** `activeTab`, `qrData`, `copied`, `copiedImage`
+- **Refs:** `qrContainerRef` for DOM manipulation of QR container, `copyTimeoutRef` and `copyImageTimeoutRef` for clipboard feedback
+- **Constants (lines 23-30):** `QR_CODE_SIZE`, `CENTER_IMAGE_SIZE_RATIO`, `CENTER_IMAGE_PADDING`, `CLIPBOARD_RESET_TIMEOUT`, etc.
 
-**Critical useEffect (line 458-479):** QR regenerates on changes to `[activeTab, urlInput, textInput, contactInfo, formatUrl, generateQRCode, generateVCard]`
+**Critical useEffect (line ~545-548):** QR regenerates on changes to `[activeTab, urlInput, textInput, contactInfo, formatUrl, generateQRCode, generateVCard]`
 
 **Hook Return Structure:** The hook returns 7 grouped objects instead of flat values for better organization:
 - `tab` - Active tab state and setter
-- `qr` - QR code data, container ref, clipboard state
+- `qr` - QR code data, container ref, clipboard state (copied, copiedImage), copy functions (copyToClipboard, copyImageToClipboard)
 - `form` - All form input states and setters
 - `colors` - Foreground/background colors with handlers (single source of truth)
 - `centerImage` - Image state, file, upload handler, remove function
@@ -115,15 +134,20 @@ All state is managed via a custom hook with React hooks (no external state libra
 5. Add form UI in render section in `src/QRCodeGenerator.tsx` (lines 105-219)
 
 **Modifying QR generation (src/hooks/useQRCodeGenerator.ts):**
-- Edit `createQR()` function (line 160-197) for QRious options
-- Modify `addCenterImage()` (line 83-132) for center image rendering
-- Edit `generateFallbackQR()` (line 134-158) for fallback behavior
-- Edit `generateQRCode()` (line 199-228) for library loading logic
+- Edit `createQR()` function (line ~165-202) for QRious options
+- Modify `addCenterImage()` (line ~88-137) for center image rendering
+- Edit `generateFallbackQR()` (line ~139-163) for fallback behavior
+- Edit `generateQRCode()` (line ~204-233) for library loading logic
 
 **Changing download behavior (src/hooks/useQRCodeGenerator.ts):**
-- Edit `downloadQRCode()` (line 355-406) for main download logic
-- Modify filename generation with `sanitizeFilename()` (line 56-62) and `createTimestampedFilename()` (line 64-72)
-- Edit `downloadFromImage()` (line 293-353) for fallback downloads
+- Edit `downloadQRCode()` (line ~358-411) for main download logic
+- Modify filename generation with `sanitizeFilename()` (line ~63-67) and `createTimestampedFilename()` (line ~69-77)
+- Edit `downloadFromImage()` (line ~296-356) for fallback downloads
+
+**Modifying clipboard behavior (src/hooks/useQRCodeGenerator.ts):**
+- Edit `copyToClipboard()` (line ~413-430) for text data copying
+- Edit `copyImageToClipboard()` (line ~432-495) for PNG image copying to clipboard
+- Both functions use separate state (`copied`, `copiedImage`) and timeout refs
 
 **Adding translations:**
 - Add new keys to both `"en-US"` and `"es-ES"` objects in `src/lib/i18n.ts`
@@ -134,4 +158,35 @@ All state is managed via a custom hook with React hooks (no external state libra
 - **No external QR libraries in package.json:** QRious is loaded dynamically from CDN
 - **Browser-only:** No server-side rendering considerations
 - **No data persistence:** Everything is client-side only, no backend
-- **No testing setup:** `tests/` directory exists but is empty
+
+## Testing
+
+The project has comprehensive test coverage with **Vitest** and **React Testing Library**:
+
+- **Test Runner:** Vitest (v3.2.4)
+- **Testing Libraries:** @testing-library/react, @testing-library/user-event, @testing-library/jest-dom
+- **Test Environment:** jsdom (DOM simulation)
+- **Coverage:** 63 tests across 3 test files
+
+**Test Files:**
+- `src/lib/i18n.test.ts` (16 tests) - Translation utilities, locale resolution, completeness validation
+- `src/hooks/useQRCodeGenerator.test.ts` (24 tests) - Hook state management, QR generation, clipboard operations
+- `src/QRCodeGenerator.test.tsx` (23 tests) - Component rendering, user interactions, integration flows
+
+**Test Configuration:**
+- `vitest.config.ts` - Vitest configuration with coverage settings
+- `src/test/setup.ts` - Test setup with mocks for canvas, QRious, ClipboardItem, and clipboard API
+
+**Running Tests:**
+```bash
+npm test              # Run all tests once
+npm run test:ui       # Interactive test UI
+npm run test:coverage # Generate coverage report
+```
+
+**Key Test Patterns:**
+- Mock canvas operations and QR library loading
+- Mock Clipboard API with `navigator.clipboard.write()` and `writeText()`
+- Use `renderHook()` for testing custom hooks in isolation
+- Use `userEvent` for simulating user interactions
+- Use `waitFor()` for async state updates
