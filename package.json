@@ -49,7 +49,7 @@
     "url": "https://github.com/jwtor7/QR/issues"
   },
   "volta": {
-    "node": "20.10.0",
-    "npm": "10.2.3"
+    "node": "20.19.5",
+    "npm": "11.6.1"
   }
 }
