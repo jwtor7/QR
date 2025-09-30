@@ -1,6 +1,6 @@
 {
   "name": "qr-code-generator",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "type": "module",
   "description": "A comprehensive React-based QR code generator with customization features",
   "author": "Junior Williams",

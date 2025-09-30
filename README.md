@@ -96,12 +96,44 @@ npm run preview
 
 ```
 src/
-├── QRCodeGenerator.tsx  # Main component with all functionality
-├── App.tsx             # App wrapper
-├── main.tsx           # Entry point
-├── index.css          # Global styles
-└── App.css            # Component styles
+├── QRCodeGenerator.tsx         # Main component (presentation layer)
+├── hooks/
+│   └── useQRCodeGenerator.ts  # Custom hook (business logic & state)
+├── lib/
+│   └── i18n.ts               # Internationalization system
+├── App.tsx                    # App wrapper
+├── main.tsx                  # Entry point
+├── index.css                 # Global styles
+└── App.css                   # Component styles
 ```
+
+## 📋 Changelog
+
+### [1.2.4] - 2025-09-29
+
+#### Improved
+- **Code Quality**: Refactored codebase for better maintainability
+  - Extracted magic numbers to named constants (`QR_CODE_SIZE`, `CENTER_IMAGE_SIZE_RATIO`, etc.)
+  - Removed redundant color state (consolidated from 4 states to 2)
+  - Reorganized hook return structure from 31 flat values to 7 logical groups
+- **Internationalization**: Moved all hard-coded UI strings to translation system
+  - Added 13 new translation keys for customization section
+  - Full Spanish translation coverage
+- **Documentation**: Updated CLAUDE.md to reflect modular architecture
+  - Accurate line counts and file structure
+  - Detailed hook return structure documentation
+
+#### Technical
+- Reduced component complexity (416 → 372 lines)
+- Improved type safety with grouped return values
+- Better separation of concerns between presentation and business logic
+- Bundle size reduced by ~240 bytes
+
+### [1.2.3] - Previous Release
+- Initial modular architecture with custom hooks
+- Multi-language support (English/Spanish)
+- Advanced color customization with hex inputs
+- Center image overlay functionality
 
 ## 🌐 Deployment
 

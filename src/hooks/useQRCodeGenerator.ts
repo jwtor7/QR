@@ -19,7 +19,14 @@ declare global {
   }
 }
 
+// Configuration constants
 const DEFAULT_FILENAME = 'qr-code';
+const QR_CODE_SIZE = 300;
+const CENTER_IMAGE_SIZE_RATIO = 0.25;
+const CENTER_IMAGE_PADDING = 8;
+const CENTER_IMAGE_BORDER_PADDING = 6;
+const CENTER_IMAGE_BORDER_WIDTH = 2;
+const CLIPBOARD_RESET_TIMEOUT = 2000;
 
 const initialContactInfo: ContactInfo = {
   firstName: '',
@@ -38,8 +45,6 @@ const useQRCodeGenerator = (t: Translator) => {
 
   const [foregroundColor, setForegroundColor] = useState('#000000');
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
-  const [foregroundHex, setForegroundHex] = useState('#000000');
-  const [backgroundHex, setBackgroundHex] = useState('#ffffff');
 
   const [centerImage, setCenterImage] = useState<string | null>(null);
   const [centerImageFile, setCenterImageFile] = useState<File | null>(null);
@@ -98,7 +103,7 @@ const useQRCodeGenerator = (t: Translator) => {
 
         img.onload = () => {
           const canvasSize = canvas.width;
-          const imageSize = canvasSize * 0.25;
+          const imageSize = canvasSize * CENTER_IMAGE_SIZE_RATIO;
           const position = (canvasSize - imageSize) / 2;
 
           ctx.imageSmoothingEnabled = true;
@@ -106,13 +111,13 @@ const useQRCodeGenerator = (t: Translator) => {
 
           ctx.fillStyle = backgroundColor;
           ctx.beginPath();
-          ctx.arc(canvasSize / 2, canvasSize / 2, imageSize / 2 + 8, 0, 2 * Math.PI);
+          ctx.arc(canvasSize / 2, canvasSize / 2, imageSize / 2 + CENTER_IMAGE_PADDING, 0, 2 * Math.PI);
           ctx.fill();
 
           ctx.strokeStyle = backgroundColor === '#ffffff' ? '#f0f0f0' : '#ffffff';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = CENTER_IMAGE_BORDER_WIDTH;
           ctx.beginPath();
-          ctx.arc(canvasSize / 2, canvasSize / 2, imageSize / 2 + 6, 0, 2 * Math.PI);
+          ctx.arc(canvasSize / 2, canvasSize / 2, imageSize / 2 + CENTER_IMAGE_BORDER_PADDING, 0, 2 * Math.PI);
           ctx.stroke();
 
           ctx.save();
@@ -142,14 +147,14 @@ const useQRCodeGenerator = (t: Translator) => {
       const img = document.createElement('img');
       const encodedData = encodeURIComponent(text);
 
-      img.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodedData}&choe=UTF-8`;
+      img.src = `https://chart.googleapis.com/chart?chs=${QR_CODE_SIZE}x${QR_CODE_SIZE}&cht=qr&chl=${encodedData}&choe=UTF-8`;
       img.alt = t('qrCodeAlt');
       img.className = 'w-full h-auto rounded-xl shadow-lg bg-white p-4';
-      img.style.maxWidth = '300px';
+      img.style.maxWidth = `${QR_CODE_SIZE}px`;
       img.style.height = 'auto';
 
       img.onerror = () => {
-        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedData}&format=png&margin=10`;
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${QR_CODE_SIZE}x${QR_CODE_SIZE}&data=${encodedData}&format=png&margin=10`;
       };
 
       qrContainerRef.current.appendChild(img);
@@ -172,7 +177,7 @@ const useQRCodeGenerator = (t: Translator) => {
         const qr = new window.QRious({
           element: canvas,
           value: text,
-          size: 300,
+          size: QR_CODE_SIZE,
           background: backgroundColor,
           foreground: foregroundColor,
           level: 'M',
@@ -183,7 +188,7 @@ const useQRCodeGenerator = (t: Translator) => {
         }
 
         canvas.className = 'w-full h-auto rounded-xl shadow-lg';
-        canvas.style.maxWidth = '300px';
+        canvas.style.maxWidth = `${QR_CODE_SIZE}px`;
         canvas.style.height = 'auto';
         canvas.style.backgroundColor = backgroundColor;
 
@@ -245,25 +250,23 @@ const useQRCodeGenerator = (t: Translator) => {
     reader.readAsDataURL(file);
   }, []);
 
-  const handleForegroundHexChange = useCallback(
+  const handleForegroundColorChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      const hex = event.target.value;
-      setForegroundHex(hex);
-
-      if (/^#[0-9A-F]{6}$/i.test(hex)) {
-        setForegroundColor(hex);
+      const value = event.target.value;
+      // Only update if valid hex color
+      if (/^#[0-9A-F]{6}$/i.test(value)) {
+        setForegroundColor(value);
       }
     },
     [],
   );
 
-  const handleBackgroundHexChange = useCallback(
+  const handleBackgroundColorChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
-      const hex = event.target.value;
-      setBackgroundHex(hex);
-
-      if (/^#[0-9A-F]{6}$/i.test(hex)) {
-        setBackgroundColor(hex);
+      const value = event.target.value;
+      // Only update if valid hex color
+      if (/^#[0-9A-F]{6}$/i.test(value)) {
+        setBackgroundColor(value);
       }
     },
     [],
@@ -301,8 +304,8 @@ const useQRCodeGenerator = (t: Translator) => {
           return;
         }
 
-        downloadCanvas.width = 300;
-        downloadCanvas.height = 300;
+        downloadCanvas.width = QR_CODE_SIZE;
+        downloadCanvas.height = QR_CODE_SIZE;
 
         const newImg = new Image();
         newImg.crossOrigin = 'anonymous';
@@ -310,8 +313,8 @@ const useQRCodeGenerator = (t: Translator) => {
         newImg.onload = () => {
           try {
             ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, 300, 300);
-            ctx.drawImage(newImg, 0, 0, 300, 300);
+            ctx.fillRect(0, 0, QR_CODE_SIZE, QR_CODE_SIZE);
+            ctx.drawImage(newImg, 0, 0, QR_CODE_SIZE, QR_CODE_SIZE);
 
             downloadCanvas.toBlob((blob) => {
               if (!blob) {
@@ -418,7 +421,7 @@ const useQRCodeGenerator = (t: Translator) => {
         window.clearTimeout(copyTimeoutRef.current);
       }
 
-      copyTimeoutRef.current = window.setTimeout(() => setCopied(false), 2000);
+      copyTimeoutRef.current = window.setTimeout(() => setCopied(false), CLIPBOARD_RESET_TIMEOUT);
     } catch (error) {
       console.error('Failed to copy text:', error);
     }
@@ -431,8 +434,6 @@ const useQRCodeGenerator = (t: Translator) => {
 
     setForegroundColor('#000000');
     setBackgroundColor('#ffffff');
-    setForegroundHex('#000000');
-    setBackgroundHex('#ffffff');
 
     setCenterImage(null);
     setCenterImageFile(null);
@@ -487,39 +488,47 @@ const useQRCodeGenerator = (t: Translator) => {
   }, []);
 
   return {
-    activeTab,
-    setActiveTab,
-    qrData,
-    qrContainerRef,
-    copied,
-    copyToClipboard,
-    urlInput,
-    setUrlInput,
-    textInput,
-    setTextInput,
-    contactInfo,
-    setContactField,
-    foregroundColor,
-    setForegroundColor,
-    backgroundColor,
-    setBackgroundColor,
-    foregroundHex,
-    setForegroundHex,
-    backgroundHex,
-    setBackgroundHex,
-    handleForegroundHexChange,
-    handleBackgroundHexChange,
-    handleImageUpload,
-    centerImage,
-    centerImageFile,
-    removeCenterImage,
-    customFilename,
-    setCustomFilename,
-    addTimestamp,
-    setAddTimestamp,
-    filenamePreview,
-    timestampedFilenamePreview,
-    downloadQRCode,
+    tab: {
+      activeTab,
+      setActiveTab,
+    },
+    qr: {
+      data: qrData,
+      containerRef: qrContainerRef,
+      copied,
+      copyToClipboard,
+    },
+    form: {
+      urlInput,
+      setUrlInput,
+      textInput,
+      setTextInput,
+      contactInfo,
+      setContactField,
+    },
+    colors: {
+      foreground: foregroundColor,
+      setForeground: setForegroundColor,
+      background: backgroundColor,
+      setBackground: setBackgroundColor,
+      handleForegroundColorChange,
+      handleBackgroundColorChange,
+    },
+    centerImage: {
+      image: centerImage,
+      file: centerImageFile,
+      handleUpload: handleImageUpload,
+      remove: removeCenterImage,
+    },
+    download: {
+      filename: customFilename,
+      setFilename: setCustomFilename,
+      addTimestamp,
+      setAddTimestamp,
+      filenamePreview,
+      timestampedFilenamePreview,
+      download: downloadQRCode,
+    },
     resetForm,
   };
 };

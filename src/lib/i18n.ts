@@ -34,7 +34,21 @@ export const TRANSLATIONS = {
     copied: "Copied!",
     qrCodeData: "QR Code Data:",
     footerText: "Generate QR codes instantly • No data stored • Free to use",
-    qrCodeAlt: "Generated QR Code"
+    qrCodeAlt: "Generated QR Code",
+    customizationTitle: "QR Code Customization",
+    colorsTitle: "Colors",
+    foregroundColorLabel: "Foreground Color (QR Pattern)",
+    backgroundColorLabel: "Background Color",
+    downloadSettingsTitle: "Download Settings",
+    fileNameLabel: "File Name",
+    fileExtension: ".png",
+    addTimestampLabel: "Add timestamp",
+    timestampFormatHelp: "Timestamp format: MMDD-HHMM (month, day, hour, minute)",
+    filenameHelp: "Enter a custom name for your downloaded QR code. Special characters will be removed automatically.",
+    centerImageTitle: "Center Image",
+    centerImageAlt: "Center image",
+    removeButton: "Remove",
+    centerImageHelp: "Upload a small logo or image to display in the center of your QR code. Keep it simple for better scannability."
   },
   "es-ES": {
     appTitle: "Generador de Códigos QR",
@@ -71,7 +85,21 @@ export const TRANSLATIONS = {
     copied: "¡Copiado!",
     qrCodeData: "Datos del Código QR:",
     footerText: "Genera códigos QR al instante • No se almacenan datos • Gratis",
-    qrCodeAlt: "Código QR Generado"
+    qrCodeAlt: "Código QR Generado",
+    customizationTitle: "Personalización del Código QR",
+    colorsTitle: "Colores",
+    foregroundColorLabel: "Color de Primer Plano (Patrón QR)",
+    backgroundColorLabel: "Color de Fondo",
+    downloadSettingsTitle: "Configuración de Descarga",
+    fileNameLabel: "Nombre del Archivo",
+    fileExtension: ".png",
+    addTimestampLabel: "Agregar marca de tiempo",
+    timestampFormatHelp: "Formato de marca de tiempo: MMDD-HHMM (mes, día, hora, minuto)",
+    filenameHelp: "Ingresa un nombre personalizado para tu código QR descargado. Los caracteres especiales se eliminarán automáticamente.",
+    centerImageTitle: "Imagen Central",
+    centerImageAlt: "Imagen central",
+    removeButton: "Eliminar",
+    centerImageHelp: "Sube un pequeño logotipo o imagen para mostrar en el centro de tu código QR. Mantenlo simple para mejor escaneabilidad."
   }
 } as const;
 
