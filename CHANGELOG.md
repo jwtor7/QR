@@ -9,15 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - **Static HTML QR Code Scannability**: Fixed QR codes in `qr-generator-static.html` not being scannable when displayed on screen
+  - **Root cause**: QR codes were generated at 300x300px but CSS scaling made them too small to scan on screen
+  - **Fix**: Increased QR code size from 300x300px to 400x400px for better on-screen scannability
+  - Downloaded PNGs are now 400x400px (previously 300x300px) with improved scan reliability
+- **Center Image QR Codes**: Fixed QR codes with center images failing to scan even after download
   - Increased error correction level from 'M' (Medium) to 'H' (High) when center image is present
   - Reduced center image size ratio from 25% to 20% for better pattern preservation
-- **Center Image QR Codes**: Fixed QR codes with center images failing to scan even after download
   - Higher error correction now ensures QR codes remain functional with logo overlays
 
 ### Technical Details
-- Changed `CENTER_IMAGE_SIZE_RATIO` constant from 0.25 to 0.20 in static HTML version
+- Changed `QR_CODE_SIZE` constant from 300 to 400 pixels
+- Changed `CENTER_IMAGE_SIZE_RATIO` constant from 0.25 to 0.20
+- Updated CSS `max-width` from 300px to 400px to match new QR code size
 - Implemented dynamic error correction level selection based on center image presence
-- QR codes without center images use 'M' level (balanced)
+- QR codes without center images use 'M' level (balanced, ~15% error correction)
 - QR codes with center images use 'H' level (maximum error correction ~30%)
 
 ## [1.3.0] - 2025-11-05
