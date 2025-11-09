@@ -2,7 +2,34 @@
 
 🎯 A comprehensive React-based QR code generator with advanced customization features.
 
-## ✨ Features
+## 🚀 Quick Start - Static HTML Version
+
+**Want to use the QR generator right away without any installation?**
+
+Simply open **`qr-generator-static.html`** in your browser - no build tools, no npm, no server required!
+
+```bash
+# Just open the file directly
+open qr-generator-static.html
+
+# Or serve it with any static server
+python3 -m http.server 8080
+# Then visit: http://localhost:8080/qr-generator-static.html
+```
+
+✨ **Features:**
+- 📦 **Zero Installation** - Single HTML file with everything included
+- 🌐 **Works Offline** - No internet required after initial load
+- 🎨 **Full Feature Parity** - All features from the React version
+- 📱 **Multi-language** - Auto-detects browser language (English/Spanish)
+- 🖼️ **Center Images** - Add logos with optimized scannability
+- 📋 **Clipboard Support** - Copy data or PNG image directly
+
+Perfect for quick sharing, embedding, or offline use!
+
+---
+
+## ✨ React Version Features
 
 - 🔗 **Multiple QR Types**: URL, Text, and Contact (vCard) generation
 - 🎨 **Color Customization**: Custom foreground and background colors with hex input
@@ -15,7 +42,7 @@
 - ⚡ **Fast Development**: Built with Vite and TypeScript
 - ✅ **Fully Tested**: Comprehensive test suite with 63 passing tests
 
-## 🚀 Quick Start
+## 💻 React Version - Development Setup
 
 ### Prerequisites
 
@@ -128,6 +155,15 @@ The project includes comprehensive test coverage with Vitest and React Testing L
 Run tests with `npm test` or use `npm run test:ui` for an interactive testing experience.
 
 ## 📋 Changelog
+
+### [1.3.2] - 2025-11-05
+
+#### Documentation
+- **README Enhancement**: Added prominent "Quick Start - Static HTML Version" section at the top
+  - Highlights the zero-installation static HTML file for immediate use
+  - Clear instructions for opening the file directly or with a static server
+  - Feature callouts emphasizing offline capability and full feature parity
+  - Improved discoverability of the static version for users who want quick access
 
 ### [1.3.1] - 2025-11-05
 
